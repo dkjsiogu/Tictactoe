@@ -5,6 +5,7 @@
 #define VOIDPIECE  0
 #define CIRCLE  1
 #define  FORK  2
+#define DRAW 3
 #define ERROR_PLACE  3
 #define  FREE  0
 #define  USABLE  1

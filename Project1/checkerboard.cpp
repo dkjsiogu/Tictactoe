@@ -22,6 +22,7 @@ bool checkerboard::checksuccess()//小棋盘检测
 		change(CIRCLE);
 		return true;
 	}
+	
 	for (int i = 0; i < 3; i++) {
 		int Horizontal[2] = { 0,0 }; int Vertical[2] = { 0,0 };//横竖
 		for (int f = 0; f < 3; f++) {
@@ -47,16 +48,50 @@ bool checkerboard::checksuccess()//小棋盘检测
 			return true;
 		}
 	}
+	bool draw = true;
+	for (int i = 0; i < 3; i++) {
+		for (int f = 0; f < 3; f++) {
+			if (this->board[i][f].state == VOIDPIECE) {
+				draw = false;
+				break;
+			}
+		}
+	}
+	if (draw == true) {
+		change(VOIDPIECE);
+		return true;
+	}
 	return false;
 }
 
 void checkerboard::change(int side)
 {	
-	this->state = side;
-	this->allow = false;
-	for (int i = 0; i < 3; i++) {
-		for (int f = 0; f < 3; f++) {
-			this->board[i][f].state = side;
+	if (side != VOIDPIECE) {
+		this->state = side;
+		this->allow = false;
+		for (int i = 0; i < 3; i++) {
+			for (int f = 0; f < 3; f++) {
+				this->board[i][f].state = side;
+			}
+		}
+	}
+	else {
+		int X = 0, O = 0;//如果一个棋盘占满，根据双方旗子数决定归属
+		for (int i = 0; i < 3; i++) {
+			for (int f = 0; f < 3; f++) {
+				if (board[i][f].state == FORK) {
+					X++;
+				}
+				else {
+					O++;
+				}
+			}
+		}
+		if (X > O) {
+			change(FORK);
+		}
+		else {
+			change(CIRCLE);
 		}
 	}
 }

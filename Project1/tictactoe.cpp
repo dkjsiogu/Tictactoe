@@ -98,11 +98,10 @@ void tictactoe::end(int a)
 	setbkmode(TRANSPARENT);
 	settextcolor(RGB(255, 142, 1));
 	updateWindows(BigBoard, 0);
-	if (a == FORK) {
-		outtextxy(200, 100, _T("X赢了!"));
-	}
-	else {
-		outtextxy(200, 100, _T("O赢了!"));
+	switch(a){
+	case FORK: outtextxy(200, 100, _T("X赢了!")); break;
+	case CIRCLE:	outtextxy(200, 100, _T("O赢了!")); break;
+	case DRAW:outtextxy(200, 100, _T("-平局-")); break;
 	}
 	mciSendString(TEXT("close resources/playing_MP3.mp3"), 0, 0, 0);
 	mciSendString(TEXT("play resources/WIN.mp3 repeat"), 0, 0, 0);
@@ -178,6 +177,18 @@ void tictactoe::BoardCheck()
 			end(FORK);
 		}
 	}
+	bool draw = true;
+	for (int i = 0; i < 3; i++) {
+		for (int f = 0; f < 3; f++) {
+			if (BigBoard[i][f].allow==true) {
+				draw = false;
+				break;
+			}
+		}
+	}
+	if (draw == true) {
+		end(DRAW);
+	}
 }
 
 void tictactoe::mouseEvent(checkerboard array[3][3], int& side)
@@ -203,7 +214,7 @@ void tictactoe::mouseEvent(checkerboard array[3][3], int& side)
 						if (mouseEvent.x >= array[i][f].board[k][j].location_x && mouseEvent.x <= array[i][f].board[k][j].location_x + BLOCKSIZE && mouseEvent.y >= array[i][f].board[k][j].location_y && mouseEvent.y <= array[i][f].board[k][j].location_y + BLOCKSIZE) {
 							if (
 								((array[i][f].board[k][j].state == VOIDPIECE) &&//多条件,判断是不是空棋格,判断是否满足可以自由落子，判断普通旗子是否满足位置需要
-									((this->PBoard.state == FREE) || (this->PBoard.state == USABLE && this->PBoard.location_x == f && this->PBoard.location_y == i))) &&
+								((this->PBoard.state == FREE) || (this->PBoard.state == USABLE && this->PBoard.location_x == f && this->PBoard.location_y == i))) &&
 								(array[i][f].allow == true)
 								) {
 
@@ -234,7 +245,7 @@ void tictactoe::mouseEvent(checkerboard array[3][3], int& side)
 											if (array[i][f].allow) {
 												setlinecolor(RGB(100, 255, 42));//提示下一步区域
 												rectangle(array[i][f].start_x, array[i][f].start_y, array[i][f].start_x + BLOCKSIZE * 3, array[i][f].start_y + BLOCKSIZE * 3);
-												Sleep(500);
+												Sleep(50);
 												setlinecolor(RGB(0, 0, 0));
 												rectangle(array[i][f].start_x, array[i][f].start_y, array[i][f].start_x + BLOCKSIZE * 3, array[i][f].start_y + BLOCKSIZE * 3);
 											}
